@@ -1,0 +1,17 @@
+api:
+  container_name: HelpNumberAPI
+  build: .
+  ports:
+   - "3000:3000"
+  links:
+    - database:db
+  environment:
+   - GIN_MODE=release
+   - DB_USERNAME=postgres
+   - DB_PASSWORD=postgres
+
+database:
+  container_name: HelpNumberDatabase
+  build: ../database
+  ports:
+    - "5432:5432"
