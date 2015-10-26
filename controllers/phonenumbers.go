@@ -16,7 +16,7 @@ func GetPhonenumbers(c *gin.Context) {
 	country_code := strings.ToUpper(c.Query("country"))
 
 	if country_code == "" {
-		country_code = findCountryCode(c)
+		country_code = findCountryCodeFromLatAndLong(c)
 	}
 
 	if isCountryExist(&country_code, db) == false {
@@ -63,7 +63,7 @@ func GetPhonenumbers(c *gin.Context) {
 	})
 }
 
-func findCountryCode(c *gin.Context) string {
+func findCountryCodeFromLatAndLong(c *gin.Context) string {
 	latString := c.Query("lat")
 	longString := c.Query("long")
 
