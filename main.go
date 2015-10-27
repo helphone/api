@@ -4,8 +4,8 @@ import (
 	"github.com/gin-gonic/contrib/cors"
 	"github.com/gin-gonic/gin"
 
-	"github.com/helpnumber/API/config"
-	c "github.com/helpnumber/API/controllers"
+	"github.com/helpnumber/api/config"
+	c "github.com/helpnumber/api/controllers"
 )
 
 func main() {
