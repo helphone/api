@@ -30,7 +30,6 @@ func GetPhonenumbers(c *gin.Context) {
 		}
 	}
 
-
 	if isLanguageExist(&language_code, db) == false {
 		c.JSON(404, gin.H{
 			"message": "This language doesn't exist",
@@ -40,7 +39,7 @@ func GetPhonenumbers(c *gin.Context) {
 
 	var rows *sql.Rows
 
-	if(country_code == "*") {
+	if country_code == "*" {
 		rows = getPhonenumbers(c, db, language_code)
 	} else {
 		rows = getPhonenumbersForCountry(c, db, country_code, language_code)
@@ -94,7 +93,6 @@ func getPhonenumbers(c *gin.Context, db *sql.DB, language_code string) *sql.Rows
 	rows, err := queryStmt.Query(language_code)
 	return rows
 }
-
 
 func getPhonenumbersForCountry(c *gin.Context, db *sql.DB, country_code string, language_code string) *sql.Rows {
 	queryStmt, err := db.Prepare("SELECT * FROM numbers_by_country_and_language($1, $2)")
