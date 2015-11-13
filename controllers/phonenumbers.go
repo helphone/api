@@ -40,9 +40,9 @@ func GetPhonenumbers(c *gin.Context) {
 	var rows *sql.Rows
 
 	if country_code == "*" {
-		rows = getPhonenumbers(c, db, language_code)
+		rows = getPhonenumbers(db, language_code)
 	} else {
-		rows = getPhonenumbersForCountry(c, db, country_code, language_code)
+		rows = getPhonenumbersForCountry(db, country_code, language_code)
 	}
 
 	defer rows.Close()
@@ -84,7 +84,7 @@ func GetPhonenumbers(c *gin.Context) {
 
 }
 
-func getPhonenumbers(c *gin.Context, db *sql.DB, language_code string) *sql.Rows {
+func getPhonenumbers(db *sql.DB, language_code string) *sql.Rows {
 	queryStmt, err := db.Prepare("SELECT * FROM numbers_by_language($1)")
 	if err != nil {
 		panic(err)
@@ -94,7 +94,7 @@ func getPhonenumbers(c *gin.Context, db *sql.DB, language_code string) *sql.Rows
 	return rows
 }
 
-func getPhonenumbersForCountry(c *gin.Context, db *sql.DB, country_code string, language_code string) *sql.Rows {
+func getPhonenumbersForCountry(db *sql.DB, country_code string, language_code string) *sql.Rows {
 	queryStmt, err := db.Prepare("SELECT * FROM numbers_by_country_and_language($1, $2)")
 	if err != nil {
 		panic(err)
