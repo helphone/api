@@ -4,9 +4,20 @@ import (
 	"database/sql"
 )
 
-type SQLPhonenumber struct {
+type Phonenumber struct {
 	Category    string `json:"category" sql:"category_name"`
-	Phonenumber string `json:"phonenumber" sql:"phone_number"`
+	Phonenumber string `json:"number" sql:"phone_number"`
+	Country     string `json:"-" sql:"country_code"`
+}
+
+type Country struct {
+	Code         string         `json:"code"`
+	Phonenumbers []*Phonenumber `json:"phonenumbers"`
+}
+
+type JSONResponse struct {
+	Language  string     `json:"language"`
+	Countries []*Country `json:"countries"`
 }
 
 func isCountryExist(code *string, db *sql.DB) bool {

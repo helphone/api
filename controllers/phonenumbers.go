@@ -16,15 +16,20 @@ func GetPhonenumbers(c *gin.Context) {
 	country_code := strings.ToUpper(c.Query("country"))
 
 	if country_code == "" {
-		country_code = findCountryCodeFromLatAndLong(c)
+		if c.Query("lat") != "" && c.Query("long") != "" {
+			country_code = findCountryCodeFromLatAndLong(c)
+		} else {
+			country_code = "*"
+		}
+	} else {
+		if isCountryExist(&country_code, db) == false {
+			c.JSON(404, gin.H{
+				"message": "This country doesn't exist",
+			})
+			return
+		}
 	}
 
-	if isCountryExist(&country_code, db) == false {
-		c.JSON(404, gin.H{
-			"message": "This country doesn't exist",
-		})
-		return
-	}
 
 	if isLanguageExist(&language_code, db) == false {
 		c.JSON(404, gin.H{
@@ -33,34 +38,72 @@ func GetPhonenumbers(c *gin.Context) {
 		return
 	}
 
+	var rows *sql.Rows
+
+	if(country_code == "*") {
+		rows = getPhonenumbers(c, db, language_code)
+	} else {
+		rows = getPhonenumbersForCountry(c, db, country_code, language_code)
+	}
+
+	defer rows.Close()
+	countries := []*Country{}
+
+	for rows.Next() {
+		var data Phonenumber
+		err := sqlstruct.Scan(&data, rows)
+
+		if err != nil {
+			panic(err)
+		}
+
+		var countryPosition int = -1
+		for i := 0; i < len(countries); i++ {
+			if countries[i].Code == data.Country {
+				countryPosition = i
+			}
+		}
+
+		if countryPosition != -1 {
+			countries[countryPosition].Phonenumbers = append(countries[countryPosition].Phonenumbers, &data)
+		} else {
+			new_country := Country{
+				data.Country,
+				[]*Phonenumber{},
+			}
+			countries = append(countries, &new_country)
+		}
+	}
+
+	err := rows.Err()
+	if err != nil {
+		panic(err)
+	}
+
+	response := JSONResponse{language_code, countries}
+	c.JSON(200, response)
+
+}
+
+func getPhonenumbers(c *gin.Context, db *sql.DB, language_code string) *sql.Rows {
+	queryStmt, err := db.Prepare("SELECT * FROM numbers_by_language($1)")
+	if err != nil {
+		panic(err)
+	}
+
+	rows, err := queryStmt.Query(language_code)
+	return rows
+}
+
+
+func getPhonenumbersForCountry(c *gin.Context, db *sql.DB, country_code string, language_code string) *sql.Rows {
 	queryStmt, err := db.Prepare("SELECT * FROM numbers_by_country_and_language($1, $2)")
 	if err != nil {
 		panic(err)
 	}
 
-	phonenumbers := []SQLPhonenumber{}
 	rows, err := queryStmt.Query(country_code, language_code)
-	defer rows.Close()
-
-	for rows.Next() {
-		var data SQLPhonenumber
-		err := sqlstruct.Scan(&data, rows)
-
-		if err == nil {
-			phonenumbers = append(phonenumbers, data)
-		}
-	}
-
-	err = rows.Err()
-	if err != nil {
-		panic(err)
-	}
-
-	c.JSON(200, gin.H{
-		"country":      country_code,
-		"language":     language_code,
-		"phonenumbers": phonenumbers,
-	})
+	return rows
 }
 
 func findCountryCodeFromLatAndLong(c *gin.Context) string {
