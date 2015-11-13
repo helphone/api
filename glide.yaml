@@ -1,4 +1,4 @@
-package: github.com/helpnumber/api
+package: github.com/helphone/api
 import:
   - package: github.com/gin-gonic/gin
     ref:     52fcc5dbf6e94df33ad313858fb94b713e9d1b4a
@@ -14,7 +14,7 @@ import:
     ref:     648daed35d49dac24a4bff253b190a80da3ab6a5
   - package: github.com/lib/pq
     ref:     83c4f410d0aed80a0f44bac6a576a7f2435791f3
-  - package: github.com/helpnumber/geo
+  - package: github.com/helphone/geo
     ref:     b5a4816d81e5d19bb826304e4293fa685a2528d9
     subpackages:
       - georeverse

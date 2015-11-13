@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/helpnumber/geo/georeverse"
+	"github.com/helphone/geo/georeverse"
 	_ "github.com/lib/pq"
 )
 

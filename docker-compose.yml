@@ -1,5 +1,4 @@
 api:
-  container_name: HelpNumberAPI
   build: .
   ports:
    - "3000:3000"
@@ -11,7 +10,6 @@ api:
    - DB_PASSWORD=postgres
 
 database:
-  container_name: HelpNumberDatabase
   build: ../database
   ports:
     - "5432:5432"

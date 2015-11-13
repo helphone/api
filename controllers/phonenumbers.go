@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/helpnumber/geo/georeverse"
+	"github.com/helphone/geo/georeverse"
 	"github.com/kisielk/sqlstruct"
 )
 
