@@ -1,24 +1,30 @@
 package main
 
 import (
-	"github.com/gin-gonic/contrib/cors"
-	"github.com/gin-gonic/gin"
+	"net/http"
 
-	"github.com/helphone/api/config"
-	c "github.com/helphone/api/controllers"
+	log "github.com/Sirupsen/logrus"
+	"github.com/gorilla/handlers"
+	"github.com/helphone/api/manager"
+	"github.com/helphone/api/service"
+	"github.com/rs/cors"
+)
+
+const (
+	port = "3000"
 )
 
 func main() {
-	r := gin.Default()
-	r.Use(config.Provide())
-	r.Use(config.ETag())
-	r.Use(cors.Default())
+	log.Infof("Starting Helphone API service on port %s", port)
 
-	r.GET("/", func(c *gin.Context) {
-		c.String(200, "Ping")
-	})
-	r.GET("/countries", c.GetCountries)
-	r.GET("/phonenumbers", c.GetPhonenumbers)
+	router := service.NewRouter()
+	h := service.MuxWrapper{
+		IsReady: false,
+		Router:  router,
+	}
 
-	r.Run(":3000")
+	go manager.Init()
+
+	handler := handlers.CompressHandler(handlers.ProxyHeaders(cors.Default().Handler(h.Router)))
+	log.Fatal(http.ListenAndServe(":"+port, handler))
 }
