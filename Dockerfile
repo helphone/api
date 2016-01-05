@@ -2,7 +2,7 @@ FROM scratch
 MAINTAINER Gaël Gillard<gael@gaelgillard.com>
 
 EXPOSE 3000
+ADD api /bin
+ADD files /etc/files
 
-COPY api /
-COPY files /etc/files
-ENTRYPOINT ["/api"]
+CMD ["/bin/api"]
