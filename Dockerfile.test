@@ -1,8 +1,0 @@
-FROM golang:1.5.2
-MAINTAINER Gaël Gillard<gael@gaelgillard.com>
-
-COPY ./files /etc/files
-COPY . /go/src/github.com/helphone/api
-WORKDIR /go/src/github.com/helphone/api
-
-CMD ["bash", "-c", "go test -v $(go list ./...|grep -v vendor) -race -p=1"]

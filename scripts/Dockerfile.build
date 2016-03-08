@@ -1,0 +1,9 @@
+FROM golang:1.6-alpine
+MAINTAINER Gaël Gillard<gael@gaelgillard.com>
+
+VOLUME ["/go/src/github.com/helphone/api"]
+WORKDIR /go/src/github.com/helphone/api
+
+COPY files /etc/files
+
+CMD ["go", "build", "-o", "api", "main.go"]
